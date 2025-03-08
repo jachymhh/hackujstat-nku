@@ -159,34 +159,6 @@ export default function IndexWeights({ weights, onChange }) {
           />
         </div>
       ))}
-
-      <div className="mt-4 p-3 bg-muted rounded-md">
-        <h3 className="font-medium mb-2">
-          Rozložení vah (Celkem: {totalWeight.toFixed(1)}%)
-        </h3>
-        <div className="h-6 w-full flex rounded-md overflow-hidden">
-          {Object.keys(localWeights).map((key, index) => {
-            const colors = [
-              "bg-blue-500", // safety
-              "bg-green-500", // housing
-              "bg-yellow-500", // airQuality
-              "bg-orange-500", // education
-              "bg-purple-500", // development
-              "bg-red-500", // healthcare
-            ];
-            return (
-              <div
-                key={key}
-                className={`${colors[index % colors.length]} h-full`}
-                style={{ width: `${localWeights[key]}%` }}
-                title={`${indexLabels[key] || key}: ${localWeights[key].toFixed(
-                  1
-                )}%`}
-              />
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }

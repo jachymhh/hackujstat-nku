@@ -139,14 +139,14 @@ export default function CrimeIndexGraph({ selectedRegion }) {
           displayRegionNames[selectedRegion] || selectedRegion
         } - Index bezpečnosti`,
         data: indexData,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.2)",
+        borderColor: "rgb(0, 0, 0)", // Changed to black
+        backgroundColor: "rgba(0, 0, 0, 0.1)", // Also updated background to match
         fill: false,
       },
       {
         label: "Trend",
         data: trendData,
-        borderColor: "rgb(255, 99, 132)",
+        borderColor: "rgb(255, 99, 132)", // Kept red
         borderDash: [5, 5],
         fill: false,
       },
@@ -172,8 +172,19 @@ export default function CrimeIndexGraph({ selectedRegion }) {
           display: true,
           text: "Index hodnoty",
         },
-        min: 50, // Adjust based on your data range if needed
-        max: 100,
+        // Remove fixed min/max values to allow dynamic scaling
+        // Add a small padding to the automatic scale
+        ticks: {
+          callback: function (value) {
+            return value.toFixed(0);
+          },
+        },
+        // This ensures that the scale adapts to the data automatically with 10% padding
+        afterDataLimits: (scale) => {
+          const range = scale.max - scale.min;
+          scale.min = Math.max(0, scale.min - range * 0.1);
+          scale.max = scale.max + range * 0.1;
+        },
       },
       x: {
         title: {

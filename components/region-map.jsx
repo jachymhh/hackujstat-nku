@@ -146,7 +146,7 @@ export default function RegionMap({
   // Create color scale - changed from blue to orange
   const colorScale = scaleLinear()
     .domain([minValue, maxValue])
-    .range(["#fff3e0", "#ff8c00"]); // Light orange to dark orange
+    .range(["#fffaf5", "#d84315"]); // Much lighter cream to much darker orange/rust
 
   // Map region names from TopoJSON to our data format
   const regionNameMap = {

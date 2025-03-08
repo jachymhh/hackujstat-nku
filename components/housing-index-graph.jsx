@@ -139,14 +139,14 @@ export default function HousingIndexGraph({ selectedRegion }) {
           regionNameMapping[selectedRegion] || selectedRegion
         } - Index dostupnosti bydlení`,
         data: indexData,
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgb(0, 0, 0)", // Changed to black
+        backgroundColor: "rgba(0, 0, 0, 0.1)", // Also updated background to match
         fill: false,
       },
       {
         label: "Trend",
         data: trendData,
-        borderColor: "rgb(255, 99, 132)",
+        borderColor: "rgb(255, 99, 132)", // Kept red
         borderDash: [5, 5],
         fill: false,
       },
