@@ -61,7 +61,7 @@ const ColorLegend = ({ minValue, maxValue, colorScale }) => {
               className="w-4 h-4 mr-2"
               style={{ backgroundColor: item.color }}
             ></div>
-            <div className="text-xs">{item.value.toFixed(0)}</div>
+            <div className="text-xs">{Math.round(item.value)}</div>
           </div>
         ))}
       </div>
@@ -138,7 +138,8 @@ export default function RegionMap({
   }
 
   // Find min and max values for color scale
-  const values = Object.values(compositeData).filter((val) => val > 0);
+  const values = Object.values(compositeData).filter((val) => !isNaN(val));
+  // Set minimum value to 0 if there are values and the minimum is 0 or close to 0
   const minValue = values.length > 0 ? Math.min(...values) : 0;
   const maxValue = values.length > 0 ? Math.max(...values) : 100;
 
@@ -211,8 +212,7 @@ export default function RegionMap({
                     geographies.map((geo, i) => {
                       const regionName = getRegionName(geo);
                       const simplifiedName = mapRegionName(regionName);
-                      const compositeValue =
-                        compositeData[simplifiedName] || 50; // Default value
+                      const compositeValue = compositeData[simplifiedName]; // Default value
                       const isSelected = simplifiedName === selectedRegion;
 
                       return (

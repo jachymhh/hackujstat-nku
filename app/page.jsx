@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import RegionMap from "@/components/region-map";
 import IndexWeights from "@/components/index-weights";
 import RegionDetails from "@/components/region-details";
+import HousingIndexGraph from "@/components/housing-index-graph";
+import CrimeIndexGraph from "@/components/crime-index-graph";
 import { fetchAllRegionData } from "@/lib/api";
 import { calculateCompositeIndex } from "@/lib/calculations";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [regionData, setRegionData] = useState({});
-  const [selectedRegion, setSelectedRegion] = useState("Praha");
+  const [selectedRegion, setSelectedRegion] = useState("Plzensky");
   const [weights, setWeights] = useState({
     safety: 16.6,
     housing: 16.6,
@@ -109,6 +111,8 @@ export default function HomePage() {
             <Skeleton className="h-[500px] rounded-lg" />
             <Skeleton className="h-[500px] md:col-span-2 rounded-lg" />
             <Skeleton className="h-[300px] md:col-span-3 rounded-lg" />
+            <Skeleton className="h-[400px] md:col-span-3 rounded-lg" />
+            <Skeleton className="h-[400px] md:col-span-3 rounded-lg" />
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
@@ -126,24 +130,35 @@ export default function HomePage() {
                   compositeData={compositeData}
                   selectedRegion={selectedRegion}
                   onRegionSelect={handleRegionSelect}
-                  weights={weights} // Add this line to pass weights
+                  weights={weights}
                 />
               </div>
             </div>
 
             <div className="bg-card rounded-lg shadow p-4 md:col-span-3">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-3xl font-semibold mb-4">
                 Detail kraje:{" "}
-                {displayRegionNames[selectedRegion] || selectedRegion}
+                <span className="text-4xl font-bold">
+                  {displayRegionNames[selectedRegion] || selectedRegion}
+                </span>
               </h2>
               {regionData[selectedRegion] ? (
                 <RegionDetails
                   regionData={regionData[selectedRegion]}
                   compositeIndex={compositeData[selectedRegion] || 0}
+                  regionName={selectedRegion}
                 />
               ) : (
                 <p>Data pro vybraný kraj nejsou k dispozici.</p>
               )}
+            </div>
+
+            <div className="md:col-span-3 lg:col-span-3">
+              <CrimeIndexGraph selectedRegion={selectedRegion} />
+            </div>
+
+            <div className="md:col-span-3 lg:col-span-3">
+              <HousingIndexGraph selectedRegion={selectedRegion} />
             </div>
           </div>
         )}
