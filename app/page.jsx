@@ -75,7 +75,6 @@ export default function Home() {
 
                     {/* Fallback in case image doesn't load */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Map className="h-16 w-16 text-gray-300" />
                       <span className="sr-only">Mapa České republiky</span>
                     </div>
                   </div>
@@ -170,7 +169,7 @@ export default function Home() {
                   <CardTitle>Školství</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Přehled vzdělávacích institucí a výsledků vzdělávání</p>
+                  <p>Přehled vzdělávacích institucí</p>
                 </CardContent>
               </Card>
 
@@ -182,7 +181,7 @@ export default function Home() {
                   <CardTitle>Zdravotnictví</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>Dostupnost a kvalita zdravotní péče v regionech</p>
+                  <p>Dostupnost zdravotní péče v regionech</p>
                 </CardContent>
               </Card>
 

@@ -9,6 +9,8 @@ import CrimeIndexGraph from "@/components/crime-index-graph";
 import { fetchAllRegionData } from "@/lib/api";
 import { calculateCompositeIndex } from "@/lib/calculations";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -96,12 +98,42 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto py-4">
-          <h1 className="text-3xl font-bold">Analýza krajů České republiky</h1>
-          <p className="text-muted-foreground">
-            Interaktivní dashboard pro porovnání indexů kvality života v krajích
-            ČR
-          </p>
+        <div className="container mx-auto py-4 flex flex-col md:flex-row gap-4 md:items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link className="flex items-center" href="/">
+              <Image
+                src="/icon.png"
+                alt="Logo NEMO"
+                width={24}
+                height={24}
+                className="h-6 w-6"
+              />
+              <span className="ml-2 text-lg font-bold">NEMO</span>
+            </Link>
+            <div className="ml-6">
+              <h1 className="text-3xl font-bold">
+                Analýza krajů České republiky
+              </h1>
+              <p className="text-muted-foreground">
+                Interaktivní dashboard pro porovnání indexů kvality života v
+                krajích ČR
+              </p>
+            </div>
+          </div>
+          <nav className="flex gap-4 sm:gap-6 justify-end items-center">
+            <Link
+              className="text-sm font-medium hover:underline underline-offset-4"
+              href="/"
+            >
+              Domů
+            </Link>
+            <Link
+              className="text-sm font-medium hover:underline underline-offset-4"
+              href="/vizualizace"
+            >
+              Vizualizace
+            </Link>
+          </nav>
         </div>
       </header>
 
