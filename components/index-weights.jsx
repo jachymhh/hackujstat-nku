@@ -2,27 +2,27 @@
 
 import { Slider } from "@/components/ui/slider";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function IndexWeights({ weights, onChange }) {
+  // Function to distribute weights equally
+  const distributeEqualWeights = (weightObj) => {
+    const count = Object.keys(weightObj).length;
+    const equalWeight = 100 / count;
+    return Object.keys(weightObj).reduce((acc, key) => {
+      acc[key] = equalWeight;
+      return acc;
+    }, {});
+  };
+
   // Make sure education is included in the initial weights
   const [localWeights, setLocalWeights] = useState(() => {
-    // If education is missing from the weights, add it with a default value
-    if (!weights.education) {
-      const totalExisting = Object.values(weights).reduce(
-        (sum, w) => sum + w,
-        0
-      );
-      const remaining = Math.max(0, 100 - totalExisting);
-      return {
-        ...weights,
-        education:
-          remaining > 0
-            ? remaining
-            : Math.floor(100 / (Object.keys(weights).length + 1)),
-      };
-    }
-    // Normalizace počátečních vah na 100%
-    return normalizeWeights({ ...weights });
+    // If education is missing from the weights, add it
+    const updatedWeights = !weights.education
+      ? { ...weights, education: 0 }
+      : { ...weights };
+    // Distribute weights equally
+    return distributeEqualWeights(updatedWeights);
   });
 
   // Improved normalization function to ensure exact 100% sum
@@ -30,12 +30,7 @@ export default function IndexWeights({ weights, onChange }) {
     const total = Object.values(weights).reduce((sum, w) => sum + w, 0);
     if (total === 0) {
       // Handle zero case - distribute evenly
-      const count = Object.keys(weights).length;
-      const equalWeight = 100 / count;
-      return Object.keys(weights).reduce((acc, key) => {
-        acc[key] = equalWeight;
-        return acc;
-      }, {});
+      return distributeEqualWeights(weights);
     }
 
     // First pass: proportionally adjust all weights
@@ -62,6 +57,12 @@ export default function IndexWeights({ weights, onChange }) {
     }
 
     return newWeights;
+  };
+
+  // Reset to equal weights
+  const resetToEqualWeights = () => {
+    const equalWeights = distributeEqualWeights(localWeights);
+    setLocalWeights(equalWeights);
   };
 
   // Ensure weights always sum to 100%
@@ -130,6 +131,13 @@ export default function IndexWeights({ weights, onChange }) {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Nastavení vah indexů</h3>
+        <Button onClick={resetToEqualWeights} variant="outline" size="sm">
+          Nastavit stejné váhy
+        </Button>
+      </div>
+
       {/* This ensures all keys in localWeights are shown as sliders */}
       {Object.keys(localWeights).map((key) => (
         <div key={key} className="space-y-2">

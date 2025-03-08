@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  ZoomableGroup,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { scaleLinear } from "d3-scale";
 import {
   Tooltip,
@@ -39,6 +34,39 @@ const normalizeWeights = (weights) => {
   }
 
   return newWeights;
+};
+
+// Helper component for the legend
+const ColorLegend = ({ minValue, maxValue, colorScale }) => {
+  // Create an array of gradient stops to render
+  const steps = 5;
+  const legendItems = Array.from({ length: steps }, (_, i) => {
+    const value = minValue + (maxValue - minValue) * (i / (steps - 1));
+    return {
+      value: value,
+      color: colorScale(value),
+    };
+  });
+
+  return (
+    <div
+      className="flex flex-col bg-white p-2 rounded shadow-md"
+      style={{ width: "100px" }}
+    >
+      <div className="text-xs font-medium mb-1 text-center">Hodnoty</div>
+      <div className="flex flex-col h-[120px]">
+        {legendItems.map((item, i) => (
+          <div key={i} className="flex items-center justify-between mb-1">
+            <div
+              className="w-4 h-4 mr-2"
+              style={{ backgroundColor: item.color }}
+            ></div>
+            <div className="text-xs">{item.value.toFixed(0)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default function RegionMap({
@@ -114,10 +142,10 @@ export default function RegionMap({
   const minValue = values.length > 0 ? Math.min(...values) : 0;
   const maxValue = values.length > 0 ? Math.max(...values) : 100;
 
-  // Create color scale
+  // Create color scale - changed from blue to orange
   const colorScale = scaleLinear()
     .domain([minValue, maxValue])
-    .range(["#e6f7ff", "#0066cc"]);
+    .range(["#fff3e0", "#ff8c00"]); // Light orange to dark orange
 
   // Map region names from TopoJSON to our data format
   const regionNameMap = {
@@ -164,68 +192,91 @@ export default function RegionMap({
 
   return (
     <TooltipProvider>
-      <div className="h-full w-full">
-        <ComposableMap
-          projection="geoMercator"
-          projectionConfig={{
-            scale: 6000,
-            center: [15.5, 49.8],
-          }}
-          width={800}
-          height={500}
-          style={{ width: "100%", height: "100%" }}
-        >
-          <ZoomableGroup center={[15.5, 49.8]} zoom={1}>
-            <Geographies geography={geoData}>
-              {({ geographies }) =>
-                geographies.map((geo, i) => {
-                  const regionName = getRegionName(geo);
-                  const simplifiedName = mapRegionName(regionName);
-                  const compositeValue = compositeData[simplifiedName] || 50; // Default value
-                  const isSelected = simplifiedName === selectedRegion;
+      <div className="relative w-full h-full">
+        <div className="flex">
+          <div className="flex-grow">
+            <ComposableMap
+              projection="geoMercator"
+              projectionConfig={{
+                scale: 6000,
+                center: [15.5, 49.8],
+              }}
+              width={800}
+              height={500}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <g>
+                <Geographies geography={geoData}>
+                  {({ geographies }) =>
+                    geographies.map((geo, i) => {
+                      const regionName = getRegionName(geo);
+                      const simplifiedName = mapRegionName(regionName);
+                      const compositeValue =
+                        compositeData[simplifiedName] || 50; // Default value
+                      const isSelected = simplifiedName === selectedRegion;
 
-                  return (
-                    <Tooltip key={geo.rsmKey || geo.id || `region-${i}`}>
-                      <TooltipTrigger asChild>
-                        <Geography
-                          geography={geo}
-                          onClick={() => onRegionSelect(simplifiedName)}
-                          style={{
-                            default: {
-                              fill: colorScale(compositeValue),
-                              stroke: "#FFFFFF",
-                              strokeWidth: isSelected ? 2 : 0.5,
-                              outline: "none",
-                            },
-                            hover: {
-                              fill: "#90CDF4",
-                              stroke: "#FFFFFF",
-                              strokeWidth: 1,
-                              outline: "none",
-                              cursor: "pointer",
-                            },
-                            pressed: {
-                              fill: "#3182CE",
-                              stroke: "#FFFFFF",
-                              strokeWidth: 1,
-                              outline: "none",
-                            },
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <div className="text-sm font-medium">{regionName}</div>
-                        <div className="text-xs">
-                          Kompozitní index: {compositeValue.toFixed(1)}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                })
-              }
-            </Geographies>
-          </ZoomableGroup>
-        </ComposableMap>
+                      return (
+                        <Tooltip key={geo.rsmKey || geo.id || `region-${i}`}>
+                          <TooltipTrigger asChild>
+                            <Geography
+                              geography={geo}
+                              onClick={() => onRegionSelect(simplifiedName)}
+                              style={{
+                                default: {
+                                  fill: colorScale(compositeValue),
+                                  stroke: "#FFFFFF",
+                                  strokeWidth: isSelected ? 6 : 0.5, // Increased from 5 to 6 for selected
+                                  outline: "none",
+                                  filter: isSelected
+                                    ? "drop-shadow(0px 0px 6px rgba(255, 140, 0, 0.8))"
+                                    : "none",
+                                  fontWeight: isSelected ? "bold" : "normal",
+                                },
+                                hover: {
+                                  fill: "#e65100", // Very dark orange for hover
+                                  stroke: "#FFFFFF",
+                                  strokeWidth: 2, // Slightly thicker border on hover
+                                  outline: "none",
+                                  cursor: "pointer",
+                                  filter:
+                                    "drop-shadow(0px 0px 4px rgba(230, 81, 0, 0.5))",
+                                },
+                                pressed: {
+                                  fill: isSelected
+                                    ? colorScale(compositeValue)
+                                    : "#e65100",
+                                  stroke: "#FFFFFF",
+                                  strokeWidth: isSelected ? 6 : 2, // Increased from 5 to 6 for selected
+                                  outline: "none",
+                                  fontWeight: "bold", // Bold on press
+                                },
+                              }}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <div className="text-sm font-medium">
+                              {regionName}
+                            </div>
+                            <div className="text-xs">
+                              Kompozitní index: {compositeValue.toFixed(1)}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })
+                  }
+                </Geographies>
+              </g>
+            </ComposableMap>
+          </div>
+          <div className="ml-2 self-center">
+            <ColorLegend
+              minValue={minValue}
+              maxValue={maxValue}
+              colorScale={colorScale}
+            />
+          </div>
+        </div>
       </div>
     </TooltipProvider>
   );

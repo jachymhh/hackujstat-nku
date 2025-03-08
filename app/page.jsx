@@ -13,11 +13,12 @@ export default function HomePage() {
   const [regionData, setRegionData] = useState({});
   const [selectedRegion, setSelectedRegion] = useState("Praha");
   const [weights, setWeights] = useState({
-    safety: 20,
-    housing: 20,
-    airQuality: 20,
-    development: 20,
-    healthcare: 20,
+    safety: 16.6,
+    housing: 16.6,
+    airQuality: 16.6,
+    development: 16.6,
+    healthcare: 16.6,
+    education: 16.6,
   });
 
   useEffect(() => {
@@ -46,16 +47,6 @@ export default function HomePage() {
           "Zlinsky",
           "Moravskoslezsky",
         ];
-
-        regions.forEach((region) => {
-          mockData[region] = {
-            safety: 50 + Math.random() * 30,
-            housing: 40 + Math.random() * 40,
-            airQuality: 30 + Math.random() * 50,
-            development: 45 + Math.random() * 35,
-            healthcare: 55 + Math.random() * 25,
-          };
-        });
 
         setRegionData(mockData);
       } finally {

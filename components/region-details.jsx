@@ -4,30 +4,38 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
 export default function RegionDetails({ regionData, compositeIndex }) {
-  // Map for proper display names with diacritics
-  const displayNames = {
-    safety: "Index bezpečnosti",
-    housing: "Index dostupnosti bydlení",
-    airQuality: "Index kvality ovzduší",
-    development: "Index seberozvoje kraje",
-    healthcare: "Index zdravotnictví",
-  };
-
-  // Colors for each index
-  const indexColors = {
-    safety: "bg-blue-500",
-    housing: "bg-green-500",
-    airQuality: "bg-yellow-500",
-    development: "bg-purple-500",
-    healthcare: "bg-red-500",
-  };
-
-  // Create indices array from the regionData object
-  const indices = Object.entries(regionData).map(([key, value]) => ({
-    name: displayNames[key] || key,
-    value: value,
-    color: indexColors[key] || "bg-gray-500",
-  }));
+  const indices = [
+    {
+      name: "Index bezpečnosti",
+      value: regionData.safety,
+      color: "bg-blue-500",
+    },
+    {
+      name: "Index dostupnosti bydlení",
+      value: regionData.housing,
+      color: "bg-green-500",
+    },
+    {
+      name: "Index kvality ovzduší",
+      value: regionData.airQuality,
+      color: "bg-yellow-500",
+    },
+    {
+      name: "Index seberozvoje kraje",
+      value: regionData.development,
+      color: "bg-purple-500",
+    },
+    {
+      name: "Index zdravotnictví",
+      value: regionData.healthcare,
+      color: "bg-red-500",
+    },
+    {
+      name: "Index školství",
+      value: regionData.education,
+      color: "bg-purple-500",
+    },
+  ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -44,7 +52,6 @@ export default function RegionDetails({ regionData, compositeIndex }) {
           </div>
         </CardContent>
       </Card>
-
       {indices.map((index) => (
         <Card key={index.name}>
           <CardHeader className="pb-2">
@@ -52,8 +59,15 @@ export default function RegionDetails({ regionData, compositeIndex }) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{index.value.toFixed(1)}</div>
-              <Progress value={index.value} className={`h-2 ${index.color}`} />
+              <div className="text-2xl font-bold">
+                {index.value !== undefined && index.value !== null
+                  ? index.value.toFixed(1)
+                  : "N/A"}
+              </div>
+              <Progress
+                value={index.value || 0}
+                className={`h-2 ${index.color}`}
+              />
             </div>
           </CardContent>
         </Card>
